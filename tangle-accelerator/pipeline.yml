@@ -1,0 +1,41 @@
+steps:
+  - name: "code style check"
+    command:
+      - "./hooks/scripts/cpplint"
+      - "./hooks/scripts/format_check"
+    plugins:
+      - docker#v2.1.0:
+          image: "wusyong/bazel:latest"
+          network: "host"
+  - name: "static code analysis"
+    command:
+      - "cppcheck ."
+    plugins:
+      - docker#v2.1.0:
+          image: "wusyong/bazel:latest"
+          network: "host"
+  - name: "bazel test dbg asan"
+    command:
+      - "make"
+      - "bazel test -c dbg --config asan //..."
+    plugins:
+      - docker#v2.1.0:
+          image: "wusyong/bazel:latest"
+          network: "host"
+          privileged: true
+  - name: "bazel test dbg tsan"
+    command:
+      - "make"
+      - "bazel test -c dbg --config tsan //..."
+    plugins:
+      - docker#v2.1.0:
+          image: "wusyong/bazel:latest"
+          network: "host"
+  - name: "bazel test dbg ubsan"
+    command:
+      - "make"
+      - "bazel test -c dbg --config ubsan //..."
+    plugins:
+      - docker#v2.1.0:
+          image: "wusyong/bazel:latest"
+          network: "host"
